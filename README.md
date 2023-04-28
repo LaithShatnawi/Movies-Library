@@ -4,7 +4,7 @@
 **Author Name**: Laith Feras Shatnawi
 
 ## WRRC
-[wrrc](./wrrc/wrrc.png)
+![wrrc](./wrrc/wrrc.png)
 
 ## Overview
 
