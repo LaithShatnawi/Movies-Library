@@ -5,6 +5,7 @@
 
 ## WRRC
 ![wrrc](./wrrc/wrrc.png)
+![newWrrc](./wrrc/newWRRC.png)
 
 ## Overview
 
