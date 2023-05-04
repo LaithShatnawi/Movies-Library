@@ -4,9 +4,12 @@ const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const app = express();
+const pg = require('pg');
+const client = new pg.Client(process.env.DATABASE);
 const port = process.env.PORT;
 const apiKey = process.env.API_KEY;
 app.use(cors());
+app.use(express.json());
 
 function Movies(id, title, release_date, poster_Path, overview) {
     this.id = id;
@@ -22,8 +25,10 @@ app.get('/', homeHandler);
 app.get('/favorite', favoriteHandler);
 app.get('/trending', trendingHandler);
 app.get('/search', searchHandler);
-app.get('/Discover', discoverHandler)
-app.get('/genre', genreHandler)
+app.get('/Discover', discoverHandler);
+app.get('/genre', genreHandler);
+app.post('/addMovie', addMovieHandler);
+app.get('/getMovies', getMoviesHandler);
 
 //Handlers
 
@@ -58,8 +63,25 @@ async function discoverHandler(req, res) {
 }
 function genreHandler(req, res) {
     let url = `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-US`;
-    axios.get(url).then((result)=>{
+    axios.get(url).then((result) => {
         res.send(result.data);
+    })
+}
+function addMovieHandler(req, res) {
+    let movie = req.body;
+    let sql = 'INSERT into movies (title, release_date, poster_path, overview) values($1,$2,$3,$4)'
+    const values = [movie.title, movie.release_date, movie.poster_path, movie.overview];
+    client.query(sql, values).then((data) => {
+        res.status(201).send(data.rows)
+    })
+}
+function getMoviesHandler(req, res) {
+    let sql = 'select * from movies';
+    client.query(sql).then((data) => {
+        let result = data.rows.map((element) => {
+            return new Movies(element.id, element.title, element.release_date, element.poster_path, element.overview);
+        });
+        res.send(result);
     })
 }
 
@@ -68,6 +90,9 @@ function errorHandler(req, res) {
 }
 
 app.use(errorHandler);
-app.listen(port, () => {
-    console.log(`server is listening on port ${port}`);
+
+client.connect().then(() => {
+    app.listen(port, () => {
+        console.log(`server is listening on port ${port}`);
+    })
 })
