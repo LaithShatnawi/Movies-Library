@@ -29,9 +29,34 @@ app.get('/Discover', discoverHandler);
 app.get('/genre', genreHandler);
 app.post('/addMovie', addMovieHandler);
 app.get('/getMovies', getMoviesHandler);
+app.put('/UPDATE/:id', updateMoviesHandler);
+app.delete('/DELETE/:id', deleteMovieHandler);
+app.get('/getMovie/:id', getCertainMovieHandler)
 
 //Handlers
 
+function updateMoviesHandler(req, res) {
+    let movieId = req.params.id;
+    let sql = `update movies set title=$1, release_date=$2, poster_path=$3, overview=$4 where id = ${movieId} returning *`;
+    const values = [req.body.title, req.body.release_date, req.body.poster_path, req.body.overview];
+    client.query(sql, values).then((data) => {
+        res.status(201).send(data.rows);
+    })
+}
+function deleteMovieHandler(req, res) {
+    let movieId = req.params.id;
+    let sql = `delete from movies where id = ${movieId}`;
+    client.query(sql).then((data) => {
+        res.status(202).send('deleted successfully');
+    })
+}
+function getCertainMovieHandler(req, res) {
+    let movieId = req.params.id;
+    let sql = `select * from movies where id = ${movieId}`;
+    client.query(sql).then((data) => {
+        res.status(200).send(data.rows)
+    })
+}
 function homeHandler(req, res) {
     res.send('welcome home');
 }
