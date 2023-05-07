@@ -7,6 +7,7 @@
 ![wrrc](./wrrc/wrrc.png)
 ![newWrrc](./wrrc/newWRRC.png)
 ![WRRC](./wrrc/WRRC.png)
+![updatedWrrc](./wrrc/updatedWrrc.png)
 
 ## Overview
 
